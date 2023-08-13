@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ohgiraffers.section01.MovieMapper">
+   <resultMap id="MovieResult" type="com.ohgiraffers.section01.MovieDTO">
+       <id property="code" column="MOVIE_CODE"/>
+       <result property="name" column="MOVIE_NAME"/>
+       <result property="theather" column ="MOVIE_THEATHER"/>
+       <result property="categoryCode" column="CATEGORY_CODE"/>
+       <result property="releaseStatus" column="RELEASE_STATUS"/>
+   </resultMap>
+
+    <select id="selectAllMovie" resultMap="MovieResult">
+        SELECT
+                 MOVIE_CODE
+                ,MOVIE_NAME
+                ,MOVIE_THEATHER
+                ,CATEGORY_CODE
+                ,RELEASE_STATUS
+          FROM TBL_MOVIE
+        ORDER BY MOVIE_CODE
+    </select>
+
+    <select id="searchMovie" resultMap="MovieResult" >
+        SELECT
+        MOVIE_CODE
+        ,MOVIE_NAME
+        ,MOVIE_THEATHER
+        ,CATEGORY_CODE
+        ,RELEASE_STATUS
+        FROM TBL_MOVIE
+        WHERE RELEASE_STATUS IS NOT NULL
+        <choose>
+            <when test="value == '상영'">
+              AND RELEASE_STATUS = 'T'
+            </when>
+            <when test="value == '비상영'">
+              AND RELEASE_STATUS = 'F'
+            </when>
+        </choose>
+
+        ORDER BY MOVIE_CODE
+    </select>
+
+
+    <select id="selectMovieByCode" parameterType="_int" resultMap="MovieResult">
+        SELECT
+        MOVIE_CODE
+        ,MOVIE_NAME
+        ,MOVIE_THEATHER
+        ,CATEGORY_CODE
+        ,RELEASE_STATUS
+        FROM TBL_MOVIE
+        WHERE MOVIE_CODE = #{code}
+        ORDER BY MOVIE_CODE
+    </select>
+
+    <insert id="insertMovie" parameterType="com.ohgiraffers.section01.MovieDTO">
+    INSERT
+        INTO TBL_MOVIE(
+         MOVIE_CODE
+        ,MOVIE_NAME
+        ,MOVIE_THEATHER
+        ,CATEGORY_CODE
+        ,RELEASE_STATUS
+        )
+        VALUES
+        (
+        SEQ_MOVIE_CODE.NEXTVAL
+        , #{name}
+        , #{theather}
+        , #{categoryCode}
+        , #{releaseStatus}
+         )
+    </insert>
+
+    <update id="updateMovie" parameterType="com.ohgiraffers.section01.MovieDTO" >
+        UPDATE
+        TBL_MOVIE
+        SET MOVIE_NAME = #{name}
+        , MOVIE_THEATHER = #{theather}
+        , CATEGORY_CODE = #{categoryCode}
+        , RELEASE_STATUS = #{releaseStatus}
+        WHERE MOVIE_CODE = #{code}
+
+    </update>
+
+    <delete id="deleteMenu" parameterType="_int" >
+        DELETE
+        FROM TBL_MOVIE
+        WHERE MOVIE_CODE = #{code}
+
+    </delete>
+</mapper>
